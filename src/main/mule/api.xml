@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<flow name="api-main">
+        <http:listener path="/api/${api.version}/*" config-ref="api-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="9e368379-08d6-4419-9050-99e34bb292a2" name="check-in-by-pnr"/>
+		<error-handler ref="api-error-handler" />
+        
+    </flow>
+    <flow name="api-console">
+        <http:listener path="/console/${api.version}/*" config-ref="api-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="0ae17dee-3be0-42ce-8044-95559e7f356a" />
+		<error-handler ref="api-console-error-handler" />
+    </flow>
+    <flow name="put:\tickets\(PNR)\checkin:application\json:api-config">
+		<flow-ref doc:name="check-in-by-pnr" doc:id="a2fb0f70-1836-4d3f-b27a-4fb9364e4f27" name="check-in-by-pnr" />
+    </flow>
+    <flow name="put:\tickets\(PNR)\paymentApproval:application\json:api-config">
+		<flow-ref doc:name="payment-approval" doc:id="4064a42f-feb5-4c27-b739-224e601a0068" name="payment-approval" />
+    </flow>
+</mule>
