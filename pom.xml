@@ -40,6 +40,7 @@
 						<persistentQueues>false</persistentQueues>
 						<workers>1</workers>
 						<workerType>SMALL</workerType>
+						<businessGroupId>bd204309-4d60-4f2c-9f16-cba5044c9992</businessGroupId>
 						<properties>
 							<anypoint.platform.gatekeeper>disabled</anypoint.platform.gatekeeper>
 						</properties>
